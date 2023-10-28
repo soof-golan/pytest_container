@@ -4,6 +4,8 @@ implementation details of container runtimes like :command:`docker` or
 
 """
 import json
+import os
+import platform
 import re
 import sys
 from abc import ABC
@@ -568,6 +570,9 @@ class DockerRuntime(OciRuntimeBase):
 
     @property
     def supports_healthcheck_inherit_from_base(self) -> bool:
+        # https://docs.docker.com/desktop/release-notes/#for-mac-4
+        if platform.system() == "Darwin":
+            return self.version >= Version(4, 23, 0)
         return True
 
     def inspect_container(self, container_id: str) -> ContainerInspect:
